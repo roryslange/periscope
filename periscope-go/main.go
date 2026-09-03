@@ -1,55 +1,40 @@
 package main
 
 import (
-	"bufio"
-	"fmt"
-	"io"
 	"log"
 	"os/exec"
-	"time"
 
-	"golang.org/x/sys/unix"
+	"github.com/roryslange/periscope/process-control"
+	"github.com/roryslange/periscope/data-collection"
 )
 
 func main() {
-	cmd := exec.Command("ls", "-al")
+	var command = "stress"
+	var args = []string{"--cpu", "4",
+		"--io", "2",
+		"--vm", "1",
+		"--vm-bytes", "64M",
+		"--timeout", "5s"}
 
-	stdout, _ := cmd.StdoutPipe()
-	err := cmd.Start()
+	target := exec.Command(command, args...)
+	stdout, _ := target.StdoutPipe()
+	stderr, _ := target.StderrPipe()
+	
+	log.Println("start")
+	err := target.Start()
 
 	if (err != nil) {
 		log.Fatal(err)
 	}
 
-	go printCmdOutput(stdout)
-	go getSomeDiagnostics()
+	go processcontrol.PrintCmdReaderOutput(&stdout)
+	go processcontrol.PrintCmdReaderOutput(&stderr)
+	go datacollection.PrintCpuTime()
 
 
 	//wait for it to finish
-	cmd.Wait()
+	target.Wait()
+	log.Println("done")
 
 	//do diagnostics summary
-}
-
-func getSomeDiagnostics() {
-	for {
-		var rusage unix.Rusage
-		unix.Getrusage(unix.RUSAGE_SELF, &rusage) //i think self is the wrong process here
-
-		fmt.Printf("User CPU: %v\tSystem CPU: %v\n", rusage.Utime, rusage.Stime)
-		time.Sleep(time.Millisecond)
-	}
-}
-
-func printCmdOutput(stdout io.Reader) {
-	scanner := bufio.NewScanner(stdout)
-
-		err := scanner.Err()
-		if (err != nil) {
-			log.Fatal(err)
-		}
-
-		for scanner.Scan() {
-			fmt.Println(scanner.Text())
-		}
 }
