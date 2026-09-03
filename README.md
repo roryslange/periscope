@@ -8,3 +8,28 @@ its like intel Vtune but it works. hardware monitoring support for apple silicon
 
 ## todo (maybe)
 not sure if i want to keep `periscope/` directory, this was originally a rust ui and code for this, however, I think I plan to use go and c for now
+
+# Structure
+Ideally how this app will work is to be flexible and lightweight enough to record some diagnostics without impacting system performance that much
+
+The main idea here is that there is a `Process Controller` which runs some command from the terminal. All other operations are wrapped around this process.
+
+The `Sampler` will then 'sample' different diagnostics about the system. Some diagnostics I'd like to record are:
+- code hotspots
+- cpu/gpu usage
+- memory usage
+- failures
+- time to complete
+- time spent on each method (future)
+
+
+## Process Control
+The Process Controller will be a simple platform that is initiated when the program is first started. This will be either from a cli call or a call in the ui. The Process Controller will handle a few things initially:
+- extracting crucial logging operations like `stdin`, `stdout`, and `stderr` from the terminal or command that were running
+- maybe we can hand in some arguments to the program call to indicate which diagnostics we want to record, whether thats cpu/gpu usage, memory, hotspots, etc.
+- indicate when and where errors may occur
+- indicate how long the callee took to run
+- organize provide some information to the user based on the diagnostics they'd like to collect
+- spawn, pause or kill targets?
+
+## Sampler
