@@ -33,3 +33,6 @@ The Process Controller will be a simple platform that is initiated when the prog
 - spawn, pause or kill targets?
 
 ## Sampler
+the sampler functionality is currently stored in the module `data-collection`. In this directory i plan to add tools for getting cpu usage, hotspots, and other system diagnostics. many of these methods may be intended to be used as a goroutine so they can be logged at the same time something is being executed.
+
+In addition to the sampling functionality I plan to add some sort of diagnostics tracking or sumamry at the end of the simution, showing the user more detailed information about which parts of the code can be optimized.
