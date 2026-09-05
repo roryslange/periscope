@@ -36,3 +36,6 @@ The Process Controller will be a simple platform that is initiated when the prog
 the sampler functionality is currently stored in the module `data-collection`. In this directory i plan to add tools for getting cpu usage, hotspots, and other system diagnostics. many of these methods may be intended to be used as a goroutine so they can be logged at the same time something is being executed.
 
 In addition to the sampling functionality I plan to add some sort of diagnostics tracking or sumamry at the end of the simution, showing the user more detailed information about which parts of the code can be optimized.
+
+# ideas
+there is a library in go called `runtime/metrics` where i can get some information directly from the go runtime about cpu details, not sure if its what I want but it might be something to explore
