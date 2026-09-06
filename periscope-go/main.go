@@ -3,9 +3,11 @@ package main
 import (
 	"log"
 	"os/exec"
+	"time"
 
-	"github.com/roryslange/periscope/process-control"
 	"github.com/roryslange/periscope/data-collection"
+	"github.com/roryslange/periscope/process-control"
+	"golang.org/x/sys/unix"
 )
 
 func main() {
@@ -27,9 +29,11 @@ func main() {
 		log.Fatal(err)
 	}
 
+	// todo: combine these prints, maybe just organize it better
 	go processcontrol.PrintCmdReaderOutput(&stdout)
 	go processcontrol.PrintCmdReaderOutput(&stderr)
-	go datacollection.PrintCpuTime()
+
+	go datacollection.PrintDetails(unix.RUSAGE_SELF, time.Millisecond)
 
 
 	//wait for it to finish

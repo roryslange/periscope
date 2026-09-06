@@ -7,12 +7,17 @@ import (
 	"golang.org/x/sys/unix"
 )
 
-func PrintCpuTime() {
+func PrintDetails(pid int, refreshRateNs time.Duration) {
 	for {
-		var rusage unix.Rusage
-		unix.Getrusage(unix.RUSAGE_SELF, &rusage) //i think self is the wrong process here
+		rusage := getCpuTime(pid)
 
-		log.Printf("\nUser CPU: %+v\tSystem CPU: %+v\n\n", rusage.Utime, rusage.Stime)
-		time.Sleep(time.Millisecond)
+		log.Printf("\nUser CPU: %+v\tSystem CPU: %+v\n", rusage.Utime, rusage.Stime)
+		time.Sleep(refreshRateNs)
 	}
+}
+
+func getCpuTime(pid int) unix.Rusage {
+	var rusage unix.Rusage
+	unix.Getrusage(pid, &rusage)
+	return rusage
 }
